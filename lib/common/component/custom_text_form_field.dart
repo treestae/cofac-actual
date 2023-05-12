@@ -7,6 +7,7 @@ class CustomTextFormField extends StatelessWidget {
   final String errorText;
   final bool obscureText;
   final bool autofocus;
+  final String initialValue;
   final ValueChanged<String>? onChanged;
 
   const CustomTextFormField({
@@ -15,6 +16,7 @@ class CustomTextFormField extends StatelessWidget {
     this.errorText = '',
     this.obscureText = false,
     this.autofocus = false,
+    this.initialValue = '',
     this.onChanged,
   });
 
@@ -28,11 +30,12 @@ class CustomTextFormField extends StatelessWidget {
     return Theme(
       data: ThemeData(colorScheme: ColorScheme.fromSwatch(errorColor: Colors.red)),
       child: TextFormField(
+        initialValue: initialValue,
         cursorColor: primaryColor,
         obscureText: obscureText,
         autofocus: autofocus,
-        onChanged: onChanged,        
-        inputFormatters: [LengthLimitingTextInputFormatter(10), FilteringTextInputFormatter.singleLineFormatter],
+        onChanged: onChanged,
+        inputFormatters: [LengthLimitingTextInputFormatter(50), FilteringTextInputFormatter.singleLineFormatter],
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (value) {
           if (value!.isEmpty) {
