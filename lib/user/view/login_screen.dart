@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:actual/common/component/custom_text_form_field.dart';
 import 'package:actual/common/const/colors.dart';
 import 'package:actual/common/layout/default_layout.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -8,6 +12,13 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final dio = Dio();
+
+    final emulatorIp = '10.0.2.2:3000'; // 에뮬레이터 IP
+    final simulatorIp = '127.0.0.1:3000'; // 시뮬레이터 IP
+
+    final ip = Platform.isMacOS == true ? simulatorIp : emulatorIp;
+
     return DefaultLayout(
       child: SingleChildScrollView(
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -40,14 +51,42 @@ class LoginScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final rawString = 'test@codefactory.ai:testtest';
+
+                    Codec<String, String> stringToBase64 = utf8.fuse(base64);
+
+                    String token = stringToBase64.encode(rawString);
+
+                    final resp = await dio.post(
+                      'http://$ip/auth/login',
+                      options: Options(
+                        headers: {
+                          'authorization': 'Basic $token',
+                        },
+                      ),
+                    );
+
+                    print(resp.data);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                   ),
                   child: Text('로그인'),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final resp = await dio.post(
+                      'http://$ip/auth/token',
+                      options: Options(
+                        headers: {
+                          'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RAY29kZWZhY3RvcnkuYWkiLCJzdWIiOiJmNTViMzJkMi00ZDY4LTRjMWUtYTNjYS1kYTlkN2QwZDkyZTUiLCJ0eXBlIjoicmVmcmVzaCIsImlhdCI6MTY4MzkwNzY5NSwiZXhwIjoxNjgzOTk0MDk1fQ.V7VxxsUhNMMhhuMlDUHAUZDJ19PihmAGtnvmGnFcCSQ',
+                        },
+                      ),
+                    );
+
+                    print(resp.data);
+                  },
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.black,
                   ),
